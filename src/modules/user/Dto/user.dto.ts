@@ -1,6 +1,7 @@
 import {IsEmail, IsNotEmpty} from "class-validator";
 
-export class CreateUserDto{
+export class UserDto {
+    userId:number;
     fullName : string;
     @IsEmail()
     email: string;
@@ -8,5 +9,7 @@ export class CreateUserDto{
     username : string;
     @IsNotEmpty({message:'Password should no be empty'})
     password : string;
-    isActive: string;
+    isActive: boolean;
+    @IsNotEmpty()
+    mobile : number;
 }
