@@ -1,9 +1,14 @@
-import {Injectable, NotAcceptableException} from '@nestjs/common';
+import {
+    ConflictException,
+    Injectable,
+    InternalServerErrorException,
+    NotAcceptableException,
+    NotFoundException
+} from '@nestjs/common';
 import {InjectRepository} from "@nestjs/typeorm";
 import {UserEntity} from "./user.entity";
 import {Repository} from "typeorm";
 import {UserDto} from "./Dto/user.dto";
-import crypto from "crypto";
 
 @Injectable()
 export class UserService {
@@ -12,6 +17,10 @@ export class UserService {
     private readonly users: any[] = [];
     getByUsername(username: string): Promise<UserEntity> {
         return this.userRepository.findOne({where:{username}});
+    }
+
+    getById(id: number): Promise<UserEntity>{
+        return this.userRepository.findOne({ where: { userId: id } })
     }
     getAllUser (){
         return this.userRepository.find();
@@ -31,16 +40,33 @@ export class UserService {
         user.username = payload.username;
         user.email = payload.email;
         user.fullname = payload.fullName;
-        const createdUser =this.userRepository.create(user);
-        return this.userRepository.save(createdUser);
+        //const createdUser =this.userRepository.create(user);
+        //return this.userRepository.save(createdUser);
+        try {
+            return await this.userRepository.save(user);
+        } catch (error) {
+            if (error) { // PostgreSQL unique constraint violation error code
+                throw new ConflictException('The provided mobile number is already associated with an account.'+error.messages);
+            }
+            throw new InternalServerErrorException('An error occurred while creating the user.');
+        }
     }
     async update(payload:UserDto){
         const foundUser = await this.userRepository.findOneBy({userId:payload.userId});
 
         if(!foundUser){
-            return "not found";
+            throw new NotFoundException("User Not found");
         }
+        const userId =payload.userId;
 
+        foundUser.email = payload.email;
+        foundUser.password = payload.password;
+        foundUser.username = payload.username;
+        foundUser.mobile = payload.mobile;
+        foundUser.fullname = payload.fullName;
+        foundUser.isActive = payload.isActive;
+
+        return this.userRepository.update({userId},foundUser);
 
     }
 }
