@@ -9,22 +9,27 @@ import {InjectRepository} from "@nestjs/typeorm";
 import {UserEntity} from "./user.entity";
 import {Repository} from "typeorm";
 import {UserDto} from "./Dto/user.dto";
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
-    constructor(@InjectRepository(UserEntity) private userRepository:Repository<UserEntity>) {
-    }
-    private readonly users: any[] = [];
-    getByUsername(username: string): Promise<UserEntity> {
-        return this.userRepository.findOne({where:{username}});
+    constructor(@InjectRepository(UserEntity) private userRepository: Repository<UserEntity>) {
     }
 
-    getById(id: number): Promise<UserEntity>{
-        return this.userRepository.findOne({ where: { userId: id } })
+    private readonly users: any[] = [];
+
+    getByUsername(username: string): Promise<UserEntity> {
+        return this.userRepository.findOne({where: {username}});
     }
-    getAllUser (){
+
+    getById(id: number): Promise<UserEntity> {
+        return this.userRepository.findOne({where: {userId: id}})
+    }
+
+    getAllUser() {
         return this.userRepository.find();
     }
+
     async create(payload: UserDto) {
         const username = await this.getByUsername(payload.username);
         console.log(username);
@@ -33,6 +38,9 @@ export class UserService {
                 'The account with the provided username currently exists. Please choose another one.',
             );
         }
+
+      //  const hashPassword = await bcrypt.hash(payload.password, 10);
+
         let user = new UserEntity();
         user.mobile = payload.mobile;
         user.isActive = payload.isActive;
@@ -45,20 +53,21 @@ export class UserService {
         try {
             return await this.userRepository.save(user);
         } catch (error) {
-            if (error) { // PostgreSQL unique constraint violation error code
-                throw new ConflictException('The provided mobile number is already associated with an account.'+error.messages);
+            if (error) {
+                throw new ConflictException('The provided mobile number is already associated with an account.' + error.messages);
             }
             throw new InternalServerErrorException('An error occurred while creating the user.');
         }
     }
-    async update(payload:UserDto){
-        const foundUser = await this.userRepository.findOneBy({userId:payload.userId});
 
-        if(!foundUser){
+    async update(payload: UserDto) {
+        const foundUser = await this.userRepository.findOneBy({userId: payload.userId});
+
+        if (!foundUser) {
             throw new NotFoundException("User Not found");
         }
-        const userId =payload.userId;
-
+        const userId = payload.userId;
+        //const hashPassword = await bcrypt.hash(payload.password, 10);
         foundUser.email = payload.email;
         foundUser.password = payload.password;
         foundUser.username = payload.username;
@@ -66,7 +75,19 @@ export class UserService {
         foundUser.fullname = payload.fullName;
         foundUser.isActive = payload.isActive;
 
-        return this.userRepository.update({userId},foundUser);
+        return this.userRepository.update({userId}, foundUser);
 
     }
+
+    async getByUsernameAndPass(username: string, password: string): Promise<UserEntity> {
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        return this.userRepository.findOne({
+            where: {
+                username,
+                password: password
+            }
+        });
+    }
+
 }
