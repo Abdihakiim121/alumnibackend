@@ -43,7 +43,7 @@ export class UserService {
 
         let user = new UserEntity();
         user.mobile = payload.mobile;
-        user.isActive = payload.isActive;
+        user.isActive = payload.isActive != null ? payload.isActive : true;
         user.password = payload.password;
         user.username = payload.username;
         user.email = payload.email;
