@@ -9,7 +9,7 @@ import {InjectRepository} from "@nestjs/typeorm";
 import {UserEntity} from "./user.entity";
 import {Repository} from "typeorm";
 import {UserDto} from "./Dto/user.dto";
-import * as bcrypt from 'bcrypt';
+import * as crypto from 'crypto';
 
 @Injectable()
 export class UserService {
@@ -43,8 +43,8 @@ export class UserService {
 
         let user = new UserEntity();
         user.mobile = payload.mobile;
-        user.isActive = payload.isActive != null ? payload.isActive : true;
-        user.password = payload.password;
+        user.isActive = payload.isActive != null ? payload.isActive = true : false;
+        user.password = crypto.createHmac('sha256', payload.password).digest('hex');
         user.username = payload.username;
         user.email = payload.email;
         user.fullname = payload.fullName;
@@ -69,7 +69,7 @@ export class UserService {
         const userId = payload.userId;
         //const hashPassword = await bcrypt.hash(payload.password, 10);
         foundUser.email = payload.email;
-        foundUser.password = payload.password;
+        foundUser.password = crypto.createHmac('sha256', payload.password).digest('hex');
         foundUser.username = payload.username;
         foundUser.mobile = payload.mobile;
         foundUser.fullname = payload.fullName;
@@ -80,12 +80,12 @@ export class UserService {
     }
 
     async getByUsernameAndPass(username: string, password: string): Promise<UserEntity> {
-        const hashedPassword = await bcrypt.hash(password, 10);
+        const hashedPassword = crypto.createHmac('sha256', password).digest('hex')
 
         return this.userRepository.findOne({
             where: {
                 username,
-                password: password
+                password: hashedPassword
             }
         });
     }
