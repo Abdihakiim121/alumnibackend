@@ -1,4 +1,4 @@
-import {Body, Controller, Get, Patch, Post, UseGuards} from '@nestjs/common';
+import {Body, Controller, Get, Patch, Post, UseGuards, Request} from '@nestjs/common';
 import {UserService} from "./user.service";
 import {UserDto} from "./Dto/user.dto";
 import {Batch} from "typeorm";
@@ -9,9 +9,10 @@ import {JwtAuthGuard} from "../auth/jwt-auth.guard";
 export class UserController {
     constructor(private userService:UserService) {
     }
+
     @UseGuards(JwtAuthGuard)
     @Get('/')
-    getAllUsers(){
+    getAllUsers() {
         return this.userService.getAllUser();
     }
     @Post("/")
@@ -24,5 +25,12 @@ export class UserController {
         const user = await this.userService.update(userDto);
         console.log(user);
         return null;
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Get('/loggedInUser')
+    getUser(@Request() req){
+        console.log("we reached here "+req.user)
+        return "user "+JSON.stringify(req.user);
     }
 }
