@@ -37,7 +37,7 @@ export class BranchService {
         branch.coverlogo = payload.coverLogo;
         branch.isactive = payload.isactive;
         branch.branchlocation = payload.branchLocation;
-        branch.datecreated = payload.datecreated;
+        branch.datecreated = new Date();
 
 
         try {

@@ -75,12 +75,13 @@ export class UserService {
         }
 
         const user = new UserEntity();
-        user.isActive = payload.isActive != null ? payload.isActive : false;
+        user.isActive = payload.isActive;
         user.password = crypto.createHmac('sha256', payload.password).digest('hex');
         user.username = payload.username;
         user.email = payload.email;
         const currentDate = new Date();
         user.datecreated = currentDate;
+        user.dateModified = currentDate;
 
         try {
             const savedUser = await this.userRepository.save(user); // Step 1: Save UserEntity

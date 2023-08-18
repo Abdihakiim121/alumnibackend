@@ -13,10 +13,10 @@ export class Branch extends BaseEntity {
     @Column()
     branchlogo: string;
     @Column()
-    coverlogo: number;
+    coverlogo: string;
     @Column()
     datecreated: Date;
-    @Column()
+    @Column({default: true})
     isactive: boolean;
 
 }

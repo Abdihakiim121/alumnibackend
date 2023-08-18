@@ -13,10 +13,8 @@ export class UserDto {
     @IsNotEmpty()
     password: string;
 
-    @IsNotEmpty()
     isActive: boolean;
 
-    @IsNotEmpty()
     datecreated: Date;
 
     @IsNotEmpty()

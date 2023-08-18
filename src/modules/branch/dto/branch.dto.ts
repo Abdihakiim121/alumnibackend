@@ -7,19 +7,17 @@ export class BranchDTO {
     @IsNotEmpty()
     branchName: string;
 
-
+    @IsNotEmpty()
     branchLocation: string;
 
-
+    
     branchLogo: string;
 
 
-    coverLogo: number;
+    coverLogo: string;
 
 
     datecreated: Date;
 
-
-    @IsBoolean()
     isactive: boolean;
 }

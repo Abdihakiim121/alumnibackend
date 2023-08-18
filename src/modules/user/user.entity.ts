@@ -14,7 +14,7 @@ export class UserEntity extends BaseEntity {
     username: string;
     @Column()
     password: string;
-    @Column()
+    @Column({default: true})
     isActive: boolean;
     @Column()
     datecreated: Date;
