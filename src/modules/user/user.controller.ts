@@ -3,6 +3,7 @@ import {UserService} from "./user.service";
 import {UserDto} from "./Dto/user.dto";
 import {UserEntity} from "./user.entity";
 import {JwtAuthGuard} from "../auth/jwt-auth.guard";
+import {ApiBaseResponse} from "../../common/dto/apiresponses.dto";
 
 @Controller('user')
 export class UserController {
@@ -21,16 +22,14 @@ export class UserController {
     }
 
     @Patch("/")
-    async updateUser(@Body() userDto: UserDto): Promise<UserEntity> {
+    async updateUser(@Body() userDto: UserDto): Promise<any> {
         const user = await this.userService.update(userDto);
         console.log(user);
-        return null;
     }
 
     @UseGuards(JwtAuthGuard)
     @Get('/loggedInUser')
     getUser(@Request() req) {
-        console.log("we reached here " + req.user.userId)
-        return "user " + JSON.stringify(req.user);
+        return "user " + JSON.stringify(req.user.user);
     }
 }

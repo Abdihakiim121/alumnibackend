@@ -10,16 +10,9 @@ export class AuthService {
                 private jwtService: JwtService) {
     }
 
-    //  async validateUser(username: string, pass: string): Promise<any> {
-    //      const user = await this.usersService.getByUsername(username);
-    //      if (user && user.password === pass) {
-    //          const { password, ...result } = user;
-    //          return result;
-    //      }
-    //      return null;
-    // }
     async createToken(user: any) {
-        const payload = {user: user};
+        const data = await this.usersService.fetchSpecificUserData(user.userId);
+        const payload = {user: data};
         return {
             access_token: this.jwtService.sign(payload),
         };

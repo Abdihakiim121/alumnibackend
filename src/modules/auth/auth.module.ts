@@ -13,7 +13,7 @@ import {JwtStrategy} from "./jwt.strategy";
     PassportModule.register({ defaultStrategy: 'local' }),
       JwtModule.register({
         secret:jwtConstants.secret,
-        signOptions: {expiresIn:'60s'}
+        signOptions: {expiresIn:'300s'}
       })
 
   ],

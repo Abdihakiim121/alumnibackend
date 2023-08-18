@@ -1,12 +1,11 @@
-import {BaseEntity, Column, Entity, PrimaryGeneratedColumn, Unique} from "typeorm";
+import {BaseEntity, Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn, Unique} from "typeorm";
 import {isEmail, IsNotEmpty} from "class-validator";
+import {UserProfile} from "./userprofile.entity";
 
 @Entity('user')
 export class UserEntity extends BaseEntity {
     @PrimaryGeneratedColumn()
     userId: number;
-    @Column()
-    fullname: string;
     @Column()
     @Unique(['email'])
     email: string;
@@ -14,11 +13,15 @@ export class UserEntity extends BaseEntity {
     @Unique(['username'])
     username: string;
     @Column()
-    @Unique(['mobile'])
-    mobile: number;
-    @Column()
     password: string;
     @Column()
     isActive: boolean;
+    @Column()
+    datecreated: Date;
+    @Column()
+    dateModified: Date;
+    @OneToOne(() => UserProfile, profile => profile.user)
+    profile: UserProfile;
+
 
 }

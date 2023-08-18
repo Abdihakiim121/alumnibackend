@@ -1,15 +1,35 @@
 import {IsEmail, IsNotEmpty} from "class-validator";
 
 export class UserDto {
-    userId:number;
-    fullName : string;
+    userId: number;
+
+    @IsNotEmpty()
     @IsEmail()
     email: string;
-    @IsNotEmpty({message:'Username should no be empty'})
-    username : string;
-    @IsNotEmpty({message:'Password should no be empty'})
-    password : string;
-    isActive: boolean;
+
     @IsNotEmpty()
-    mobile : number;
+    username: string;
+
+    @IsNotEmpty()
+    password: string;
+
+    @IsNotEmpty()
+    isActive: boolean;
+
+    @IsNotEmpty()
+    datecreated: Date;
+
+    @IsNotEmpty()
+    firstName: string;
+
+    @IsNotEmpty()
+    lastName: string;
+
+    @IsNotEmpty()
+    middleName: string;
+
+    @IsNotEmpty()
+    mobile: number;
+
+    branchId: number;
 }
