@@ -11,6 +11,7 @@ import {Repository} from "typeorm";
 import {UserDto} from "./Dto/user.dto";
 import * as crypto from 'crypto';
 import {UserProfile} from "./userprofile.entity";
+import { CurrentUser } from 'src/common/dto/currentuser.dto';
 
 @Injectable()
 export class UserService {
@@ -28,7 +29,7 @@ export class UserService {
         return this.userRepository.findOne({where: {userId: id}})
     }
 
-    getAllUser() {
+    getAllUser(currentUser: CurrentUser) {
         return this.userRepository.find();
     }
 
