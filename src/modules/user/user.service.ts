@@ -91,17 +91,19 @@ export class UserService {
             userProfile.lastName = payload.lastName;
             userProfile.middleName = payload.middleName;
             userProfile.mobile = payload.mobile;
-            userProfile.branchId = payload.branchId;
+            userProfile.branchId = payload.branchId > 0 ? payload.branchId : null;
             userProfile.user = savedUser; // Step 2: Associate UserProfile with UserEntity
 
             userProfile.datecreated = currentDate;
+            userProfile.dateModified = currentDate;
 
             await this.userProfileRepository.save(userProfile);
+
 
             return savedUser;
         } catch (error) {
             if (error) {
-                throw new ConflictException('The provided mobile number is already associated with an account.' + error.message);
+                throw new ConflictException(error.message);
             }
             throw new InternalServerErrorException('An error occurred while creating the user.');
         }
