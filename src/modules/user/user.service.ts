@@ -11,6 +11,7 @@ import {Repository} from "typeorm";
 import {UserDto} from "./Dto/user.dto";
 import * as crypto from 'crypto';
 import {UserProfile} from "./userprofile.entity";
+import { CurrentUser } from 'src/common/dto/currentuser.dto';
 
 @Injectable()
 export class UserService {
@@ -28,7 +29,7 @@ export class UserService {
         return this.userRepository.findOne({where: {userId: id}})
     }
 
-    getAllUser() {
+    getAllUser(currentUser: CurrentUser) {
         return this.userRepository.find();
     }
 
@@ -75,12 +76,13 @@ export class UserService {
         }
 
         const user = new UserEntity();
-        user.isActive = payload.isActive != null ? payload.isActive : false;
+        user.isActive = payload.isActive;
         user.password = crypto.createHmac('sha256', payload.password).digest('hex');
         user.username = payload.username;
         user.email = payload.email;
         const currentDate = new Date();
         user.datecreated = currentDate;
+        user.dateModified = currentDate;
 
         try {
             const savedUser = await this.userRepository.save(user); // Step 1: Save UserEntity
@@ -90,17 +92,19 @@ export class UserService {
             userProfile.lastName = payload.lastName;
             userProfile.middleName = payload.middleName;
             userProfile.mobile = payload.mobile;
-            userProfile.branchId = payload.branchId;
+            userProfile.branchId = payload.branchId > 0 ? payload.branchId : null;
             userProfile.user = savedUser; // Step 2: Associate UserProfile with UserEntity
 
             userProfile.datecreated = currentDate;
+            userProfile.dateModified = currentDate;
 
             await this.userProfileRepository.save(userProfile);
+
 
             return savedUser;
         } catch (error) {
             if (error) {
-                throw new ConflictException('The provided mobile number is already associated with an account.' + error.message);
+                throw new ConflictException(error.message);
             }
             throw new InternalServerErrorException('An error occurred while creating the user.');
         }

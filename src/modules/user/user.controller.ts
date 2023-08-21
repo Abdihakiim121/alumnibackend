@@ -12,8 +12,8 @@ export class UserController {
 
     @UseGuards(JwtAuthGuard)
     @Get('/')
-    getAllUsers() {
-        return this.userService.getAllUser();
+    getAllUsers(@Request() req) {
+        return this.userService.getAllUser(req.user.user);
     }
 
     @Post("/")

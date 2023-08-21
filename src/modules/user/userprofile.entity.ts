@@ -20,7 +20,7 @@ export class UserProfile {
     @Unique(['mobile'])
     mobile: number;
 
-    @Column()
+    @Column({nullable:true})
     branchId: number;
 
     @OneToOne(() => UserEntity, user => user.profile)
