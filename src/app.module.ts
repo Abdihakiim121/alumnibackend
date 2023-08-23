@@ -25,7 +25,7 @@ import configuration from "./config/configuration";
         database: configService.get<string>('database.name'),
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
         logging: configService.get('database.logging'),
-        synchronize: false,
+        synchronize: true,
       }),
       inject: [ConfigService],
     }),

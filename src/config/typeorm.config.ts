@@ -4,7 +4,7 @@ export const typeOrmConfig :TypeOrmModuleOptions ={
     type: 'mysql',
     host: 'localhost',
     username: 'root',
-    password: 'password',
+    password: 'Isma@1234',
     database: 'sms',
     //entities: [],
      //entities: ['dist/src/**/*.entity{.ts,.js}'],

@@ -1,6 +1,7 @@
-import {BaseEntity, Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn, Unique} from "typeorm";
+import {BaseEntity, Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn, Unique} from "typeorm";
 import {isEmail, IsNotEmpty} from "class-validator";
 import {UserProfile} from "./userprofile.entity";
+import {Loginhistories} from "./loginhistories.entity";
 
 @Entity('user')
 export class UserEntity extends BaseEntity {
@@ -22,6 +23,7 @@ export class UserEntity extends BaseEntity {
     dateModified: Date;
     @OneToOne(() => UserProfile, profile => profile.user)
     profile: UserProfile;
-
+    @OneToMany(() => Loginhistories, loginHistory => loginHistory.user)
+    loginHistory:Loginhistories[];
 
 }
