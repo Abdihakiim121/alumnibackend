@@ -1,26 +1,35 @@
-import {BaseEntity, Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn, Unique} from "typeorm";
-import {isEmail, IsNotEmpty} from "class-validator";
+import {BaseEntity, Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, Unique} from "typeorm";
 import {UserProfile} from "./userprofile.entity";
 import {Loginhistories} from "./loginhistories.entity";
+import { RoleEntity } from "../role/role.entity";
 
-@Entity('user')
+@Entity('users')
 export class UserEntity extends BaseEntity {
     @PrimaryGeneratedColumn()
     userId: number;
-    @Column()
-    @Unique(['email'])
+    @Column({ unique: true })
     email: string;
-    @Column()
-    @Unique(['username'])
+    @Column({ unique: true, nullable: true })
     username: string;
-    @Column()
-    password: string;
-    @Column({default: true})
+    @Column({ name: 'passwordHash' })
+    passwordHash: string;
+    @Column({ type: 'varchar', length: 20, nullable: true })
+    phone: string;
+    @ManyToOne(() => RoleEntity, (role) => role.users, { nullable: true })
+    @JoinColumn({ name: 'roleId' })
+    role: RoleEntity;
+    @Column({ default: true })
     isActive: boolean;
-    @Column()
-    datecreated: Date;
-    @Column()
-    dateModified: Date;
+    @Column({ default: false })
+    isVerified: boolean;
+    @Column({ type: 'varchar', length: 10, nullable: true })
+    otpCode: string;
+    @Column({ default: false })
+    isOtpVerified: boolean;
+    @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
+    createdAt: Date;
+    @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
+    updatedAt: Date;
     @OneToOne(() => UserProfile, profile => profile.user)
     profile: UserProfile;
     @OneToMany(() => Loginhistories, loginHistory => loginHistory.user)

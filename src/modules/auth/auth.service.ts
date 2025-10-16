@@ -4,6 +4,7 @@ import {JwtService} from "@nestjs/jwt";
 import {LoginDto} from "./Dto/login.dto";
 import {UserEntity} from "../user/user.entity";
 import {Loginhistories} from "../user/loginhistories.entity";
+import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class AuthService {
@@ -20,14 +21,15 @@ export class AuthService {
     }
 
     async validateUser(username:string, password:string): Promise<UserEntity> {
-        const user = await this.usersService.getByUsernameAndPass(
-            username,
-            password,
-        );
+        const user = await this.usersService.getByUsername(username);
         if (!user) {
             throw new UnauthorizedException(
                 'Could not authenticate. Please try again.',
             );
+        }
+        const match = await bcrypt.compare(password, user.passwordHash);
+        if (!match) {
+            throw new UnauthorizedException('Invalid credentials');
         }
         return user;
     }

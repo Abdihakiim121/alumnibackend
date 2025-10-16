@@ -4,6 +4,8 @@ import {UserDto} from "./Dto/user.dto";
 import {UserEntity} from "./user.entity";
 import {JwtAuthGuard} from "../auth/jwt-auth.guard";
 import {ApiBaseResponse} from "../../common/dto/apiresponses.dto";
+import { RolesGuard } from "../auth/roles.guard";
+import { Roles } from "../auth/roles.decorator";
 
 @Controller('user')
 export class UserController {
@@ -16,11 +18,15 @@ export class UserController {
         return this.userService.getAllUser(req.user.user);
     }
 
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles('Admin')
     @Post("/")
     createUser(@Body() userDto: UserDto) {
         return this.userService.create(userDto);
     }
 
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles('Admin')
     @Patch("/")
     async updateUser(@Body() userDto: UserDto): Promise<any> {
         const user = await this.userService.update(userDto);

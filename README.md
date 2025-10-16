@@ -1,73 +1,167 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# Alumni Backend API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A comprehensive NestJS-based backend API for managing alumni data and relationships for Mogadishu University.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Features
 
-## Description
+- **Authentication & Authorization**: JWT-based authentication with role-based access control
+- **User Management**: Complete user registration, profile management, and login history
+- **University Structure**: Faculty, Department, and Batch management
+- **Alumni Profiles**: Detailed alumni profiles with academic and professional information
+- **Database Seeding**: Pre-populated with university structure and sample data
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Tech Stack
 
-## Installation
+- **Framework**: NestJS
+- **Database**: MySQL with TypeORM
+- **Authentication**: JWT with Passport.js
+- **Password Hashing**: bcryptjs
+- **API Documentation**: Swagger/OpenAPI
 
-```bash
-$ npm install
-```
+## Database Schema
 
-## Running the app
+The system includes the following main entities:
 
-```bash
-# development
-$ npm run start
+- **Roles**: Admin, Member
+- **Users**: Authentication and basic user information
+- **UserProfiles**: Detailed alumni profiles
+- **Faculties**: University faculties (12 faculties)
+- **Departments**: Academic departments (45+ departments)
+- **Batches**: Graduation years (2018-2022)
+- **DepartmentBatches**: Junction table linking departments to batches
 
-# watch mode
-$ npm run start:dev
+## Getting Started
 
-# production mode
-$ npm run start:prod
-```
+### Prerequisites
 
-## Test
+- Node.js (v16 or higher)
+- MySQL (v8.0 or higher)
+- npm or yarn
+
+### Installation
+
+1. Clone the repository:
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+git clone <repository-url>
+cd alumnibackend
 ```
 
-## Support
+2. Install dependencies:
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+```bash
+npm install
+```
 
-## Stay in touch
+3. Set up environment variables:
+   Create a `.env` file in the root directory:
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+```env
+DATABASE_HOST=localhost
+DATABASE_PORT=3306
+DATABASE_USERNAME=root
+DATABASE_PASSWORD=your_password
+DATABASE_NAME=alumnidb
+JWT_SECRET=your_jwt_secret
+ADMIN_EMAIL=admin@alumni.local
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD=ChangeMe123!
+```
+
+4. Run database migrations:
+
+```bash
+npm run migration:run
+```
+
+5. Seed the database:
+
+```bash
+npm run seed
+```
+
+6. Start the development server:
+
+```bash
+npm run start:dev
+```
+
+The API will be available at `http://localhost:3000`
+
+## API Endpoints
+
+### Authentication
+
+- `POST /auth/login` - User login
+
+### Users (Protected)
+
+- `GET /user` - Get all users (Admin only)
+- `POST /user` - Create new user
+- `PATCH /user` - Update user
+- `GET /user/loggedInUser` - Get current user profile
+
+## Default Users
+
+After seeding, you can login with:
+
+**Admin User:**
+
+- Email: `admin@alumni.local`
+- Username: `admin`
+- Password: `ChangeMe123!`
+
+**Member User:**
+
+- Email: `member1@alumni.local`
+- Username: `member1`
+- Password: `Member123!`
+
+## Database Seeding
+
+The seed script populates the database with:
+
+- Default roles (Admin, Member)
+- All Mogadishu University faculties and departments
+- Sample batches (2018-2022)
+- Department-batch relationships
+- Admin and sample member users with profiles
+
+## Scripts
+
+- `npm run start:dev` - Start development server with hot reload
+- `npm run build` - Build the application
+- `npm run start:prod` - Start production server
+- `npm run migration:generate` - Generate new migration
+- `npm run migration:run` - Run pending migrations
+- `npm run seed` - Seed the database
+- `npm run test` - Run tests
+
+## Project Structure
+
+```
+src/
+├── modules/
+│   ├── auth/           # Authentication module
+│   ├── user/           # User management
+│   ├── role/           # Role management
+│   ├── faculty/        # Faculty management
+│   ├── department/     # Department management
+│   ├── batch/          # Batch management
+│   └── department-batch/ # Department-batch relationships
+├── config/             # Configuration files
+├── common/             # Shared utilities and DTOs
+└── seeds/              # Database seeding scripts
+```
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests if applicable
+5. Submit a pull request
 
 ## License
 
-Nest is [MIT licensed](LICENSE).
+This project is licensed under the UNLICENSED License.

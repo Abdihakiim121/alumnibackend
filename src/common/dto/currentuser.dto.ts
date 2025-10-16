@@ -10,9 +10,8 @@ export class CurrentUser {
   }
 
   export class Profile {
-    userProfileId: string;
+    profileId: string;
     firstName: string;
-    middleName: string;
-    mobile: string;
-    branchId: string;
+    middleName?: string;
+    lastName: string;
 }

@@ -1,21 +1,25 @@
-import {IsEmail, IsNotEmpty} from "class-validator";
+import {IsEmail, IsNotEmpty, IsOptional, IsString, IsBoolean, IsNumber} from "class-validator";
 
 export class UserDto {
+    @IsOptional()
     userId: number;
 
     @IsNotEmpty()
     @IsEmail()
     email: string;
 
-    @IsNotEmpty()
+    @IsOptional()
     username: string;
 
     @IsNotEmpty()
     password: string;
 
+    @IsOptional()
+    @IsBoolean()
     isActive: boolean;
 
-    datecreated: Date;
+    @IsOptional()
+    phone?: string;
 
     @IsNotEmpty()
     firstName: string;
@@ -23,11 +27,10 @@ export class UserDto {
     @IsNotEmpty()
     lastName: string;
 
-    @IsNotEmpty()
-    middleName: string;
+    @IsOptional()
+    middleName?: string;
 
-    @IsNotEmpty()
-    mobile: number;
-
-    branchId: number;
+    @IsOptional()
+    @IsNumber()
+    roleId?: number;
 }
