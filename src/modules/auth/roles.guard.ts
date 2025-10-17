@@ -4,22 +4,20 @@ import { ROLES_KEY } from './roles.decorator';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
-    constructor(private reflector: Reflector) {}
+  constructor(private reflector: Reflector) {}
 
-    canActivate(context: ExecutionContext): boolean {
-        const requiredRoles = this.reflector.getAllAndOverride<string[]>(ROLES_KEY, [
-            context.getHandler(),
-            context.getClass(),
-        ]);
-        if (!requiredRoles || requiredRoles.length === 0) {
-            return true;
-        }
-        const request = context.switchToHttp().getRequest();
-        const user = request.user?.user; // from JwtStrategy validate -> { user: payload.user }
-        const roleName = user?.role?.roleName;
-        if (!roleName) return false;
-        return requiredRoles.includes(roleName);
+  canActivate(context: ExecutionContext): boolean {
+    const requiredRoles = this.reflector.getAllAndOverride<string[]>(
+      ROLES_KEY,
+      [context.getHandler(), context.getClass()],
+    );
+    if (!requiredRoles || requiredRoles.length === 0) {
+      return true;
     }
+    const request = context.switchToHttp().getRequest();
+    // JwtStrategy now sets { sub, role, username, email }
+    const roleName = request.user?.role;
+    if (!roleName) return false;
+    return requiredRoles.includes(roleName);
+  }
 }
-
-
