@@ -2,10 +2,10 @@ import 'reflect-metadata';
 import AppDataSource from '../config/data-source';
 import { RoleEntity } from '../modules/role/role.entity';
 import { UserEntity } from '../modules/user/user.entity';
-import { FacultyEntity } from '../modules/faculty/faculty.entity';
-import { DepartmentEntity } from '../modules/department/department.entity';
-import { BatchEntity } from '../modules/batch/batch.entity';
-import { DepartmentBatchEntity } from '../modules/department-batch/department-batch.entity';
+import { FacultyEntity } from '../modules/alumni/entities/faculty.entity';
+import { DepartmentEntity } from '../modules/alumni/entities/department.entity';
+import { BatchEntity } from '../modules/alumni/entities/batch.entity';
+import { DepartmentBatchEntity } from '../modules/alumni/entities/department-batch.entity';
 import { UserProfile } from '../modules/user/userprofile.entity';
 import * as bcrypt from 'bcryptjs';
 
@@ -382,6 +382,14 @@ async function runSeed() {
       role: adminRole!,
     });
     await userRepo.save(admin);
+    // create minimal admin profile
+    const adminProfile = userProfileRepo.create({
+      user: admin,
+      firstName: 'System',
+      middleName: null,
+      lastName: 'Admin',
+    });
+    await userProfileRepo.save(adminProfile);
     console.log('Seeded admin user');
   }
 
@@ -400,6 +408,7 @@ async function runSeed() {
       isActive: true,
       isVerified: true,
       role: memberRole!,
+      isAlumni: true,
     });
     member = await userRepo.save(member);
 

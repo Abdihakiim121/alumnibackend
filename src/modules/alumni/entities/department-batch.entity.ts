@@ -6,8 +6,8 @@ import {
   Unique,
   JoinColumn,
 } from 'typeorm';
-import { DepartmentEntity } from '../department/department.entity';
-import { BatchEntity } from '../batch/batch.entity';
+import { DepartmentEntity } from './department.entity';
+import { BatchEntity } from './batch.entity';
 
 @Entity('departmentbatches')
 @Unique('unique_department_batch', ['department', 'batch'])

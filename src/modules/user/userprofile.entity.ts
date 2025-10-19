@@ -7,9 +7,9 @@ import {
   OneToOne,
 } from 'typeorm';
 import { UserEntity } from './user.entity';
-import { FacultyEntity } from '../faculty/faculty.entity';
-import { DepartmentEntity } from '../department/department.entity';
-import { BatchEntity } from '../batch/batch.entity';
+import { FacultyEntity } from '../alumni/entities/faculty.entity';
+import { DepartmentEntity } from '../alumni/entities/department.entity';
+import { BatchEntity } from '../alumni/entities/batch.entity';
 
 @Entity('userprofiles')
 export class UserProfile {

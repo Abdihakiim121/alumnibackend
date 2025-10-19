@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { AlumniModule } from './modules/alumni/alumni.module';
 import { UserModule } from './modules/user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './modules/auth/auth.module';
@@ -28,6 +29,7 @@ import configuration from './config/configuration';
       inject: [ConfigService],
     }),
     UserModule,
+    AlumniModule,
     AuthModule,
   ],
   controllers: [AppController],

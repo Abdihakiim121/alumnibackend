@@ -6,9 +6,9 @@ import {
   OneToMany,
   JoinColumn,
 } from 'typeorm';
-import { FacultyEntity } from '../faculty/faculty.entity';
-import { DepartmentBatchEntity } from '../department-batch/department-batch.entity';
-import { UserProfile } from '../user/userprofile.entity';
+import { FacultyEntity } from './faculty.entity';
+import { DepartmentBatchEntity } from './department-batch.entity';
+import { UserProfile } from '../../user/userprofile.entity';
 
 @Entity('departments')
 export class DepartmentEntity {

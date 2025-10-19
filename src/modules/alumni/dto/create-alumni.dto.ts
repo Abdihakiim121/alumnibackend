@@ -1,46 +1,49 @@
 import {
+  IsBoolean,
   IsEmail,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
   IsString,
-  IsBoolean,
-  IsNumber,
   ValidateIf,
 } from 'class-validator';
 
-export class UserDto {
-  @IsOptional()
-  userId: number;
-
-  @IsNotEmpty()
+export class CreateAlumniDto {
   @IsEmail()
+  @IsNotEmpty()
   email: string;
 
   @IsOptional()
-  username: string;
+  @IsString()
+  username?: string;
 
   @IsNotEmpty()
+  @IsString()
   password: string;
 
   @IsOptional()
-  @IsBoolean()
-  isActive: boolean;
-
-  @IsOptional()
+  @IsString()
   phone?: string;
 
-  @IsNotEmpty()
-  firstName: string;
-
-  @IsNotEmpty()
-  lastName: string;
-
   @IsOptional()
-  middleName?: string;
+  @IsBoolean()
+  isActive?: boolean;
 
   @IsOptional()
   @IsBoolean()
   isAlumni?: boolean;
+
+  @IsNotEmpty()
+  @IsString()
+  firstName: string;
+
+  @IsOptional()
+  @IsString()
+  middleName?: string;
+
+  @IsNotEmpty()
+  @IsString()
+  lastName: string;
 
   @ValidateIf((o) => o.isAlumni === true)
   @IsNumber()
@@ -60,6 +63,18 @@ export class UserDto {
   profession?: string;
 
   @IsOptional()
-  @IsNumber()
-  roleId?: number;
+  @IsString()
+  company?: string;
+
+  @IsOptional()
+  @IsString()
+  country?: string;
+
+  @IsOptional()
+  @IsString()
+  city?: string;
+
+  @IsOptional()
+  @IsString()
+  bio?: string;
 }

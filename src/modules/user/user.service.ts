@@ -11,6 +11,9 @@ import { Repository } from 'typeorm';
 import { UserDto } from './Dto/user.dto';
 import * as bcrypt from 'bcryptjs';
 import { UserProfile } from './userprofile.entity';
+import { FacultyEntity } from '../alumni/entities/faculty.entity';
+import { DepartmentEntity } from '../alumni/entities/department.entity';
+import { BatchEntity } from '../alumni/entities/batch.entity';
 import { CurrentUser } from 'src/common/dto/currentuser.dto';
 import { Loginhistories } from './loginhistories.entity';
 
@@ -23,6 +26,12 @@ export class UserService {
     private userProfileRepository: Repository<UserProfile>,
     @InjectRepository(Loginhistories)
     private loginRepository: Repository<Loginhistories>,
+    @InjectRepository(FacultyEntity)
+    private facultyRepository?: Repository<FacultyEntity>,
+    @InjectRepository(DepartmentEntity)
+    private departmentRepository?: Repository<DepartmentEntity>,
+    @InjectRepository(BatchEntity)
+    private batchRepository?: Repository<BatchEntity>,
   ) {}
 
   private readonly users: any[] = [];
@@ -110,6 +119,7 @@ export class UserService {
     user.username = payload.username;
     user.email = payload.email;
     user.phone = payload.phone;
+    user.isAlumni = !!payload.isAlumni;
     // role assignment handled if roleId provided (optional)
 
     try {
@@ -120,6 +130,32 @@ export class UserService {
       userProfile.lastName = payload.lastName;
       userProfile.middleName = payload.middleName;
       userProfile.user = savedUser; // Step 2: Associate UserProfile with UserEntity
+
+      if (user.isAlumni) {
+        if (
+          !payload.facultyId ||
+          !payload.departmentId ||
+          !payload.batchId ||
+          !payload.profession
+        ) {
+          throw new NotAcceptableException(
+            'facultyId, departmentId, batchId and profession are required for alumni',
+          );
+        }
+        const faculty = await this.facultyRepository!.findOne({
+          where: { facultyId: payload.facultyId },
+        });
+        const department = await this.departmentRepository!.findOne({
+          where: { departmentId: payload.departmentId },
+        });
+        const batch = await this.batchRepository!.findOne({
+          where: { batchId: payload.batchId },
+        });
+        userProfile.faculty = faculty || null;
+        userProfile.department = department || null;
+        userProfile.batch = batch || null;
+        userProfile.profession = payload.profession;
+      }
 
       await this.userProfileRepository.save(userProfile);
 
@@ -152,12 +188,42 @@ export class UserService {
       foundUser.isActive = payload.isActive;
     }
 
-    const existingUserProfile = await this.userProfileRepository.findOneBy({
-      user: { userId: foundUser.userId },
+    const existingUserProfile = await this.userProfileRepository.findOne({
+      where: { user: { userId: foundUser.userId } },
+      relations: ['user', 'faculty', 'department', 'batch'],
     });
     existingUserProfile.firstName = payload.firstName;
     existingUserProfile.middleName = payload.middleName;
     existingUserProfile.lastName = payload.lastName;
+
+    if (foundUser.isAlumni) {
+      if (payload.facultyId) {
+        existingUserProfile.faculty = await this.facultyRepository!.findOne({
+          where: { facultyId: payload.facultyId },
+        });
+      }
+      if (payload.departmentId) {
+        existingUserProfile.department =
+          await this.departmentRepository!.findOne({
+            where: { departmentId: payload.departmentId },
+          });
+      }
+      if (payload.batchId) {
+        existingUserProfile.batch = await this.batchRepository!.findOne({
+          where: { batchId: payload.batchId },
+        });
+      }
+      if (payload.profession !== undefined) {
+        existingUserProfile.profession = payload.profession;
+      }
+    } else {
+      // Admins: ignore alumni fields
+      existingUserProfile.faculty = null;
+      existingUserProfile.department = null;
+      existingUserProfile.batch = null;
+      if (payload.profession !== undefined)
+        existingUserProfile.profession = null;
+    }
 
     const updatedUser = await this.userRepository.update({ userId }, foundUser);
     const updateUserProfile = await this.userProfileRepository.update(
